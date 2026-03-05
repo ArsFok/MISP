@@ -1,6 +1,7 @@
 #include "fracture.h"
 #include <stdexcept>
 #include <cmath>
+#include <iostream>
 
 int gcd(int a, int b){
     a = std::abs(a);
@@ -19,10 +20,11 @@ fracture::fracture(int n) : num(n), del(1){}
 
 fracture::fracture(int n, int d) : num(n), del(d){
     if(d == 0){
-        throw std::runtime_error("Del = 0");
+        throw std::invalid_argument("Del = 0");
     }
     simplify();
 }
+
 void fracture::simplify(){
     if(del < 0){
         num = -num;
@@ -30,13 +32,15 @@ void fracture::simplify(){
     }
 
     int k = gcd(num, del);
-    num /= k;
-    del /= k;
+    if(k != 0) {
+        num /= k;
+        del /= k;
+    }
 }
 
 void fracture::set_del(int d){
     if(d == 0){
-        throw std::runtime_error("Del = 0");
+        throw std::invalid_argument("Del = 0");
     }
     del = d;
     simplify();
@@ -45,40 +49,47 @@ void fracture::set_del(int d){
 fracture fracture::operator + (const fracture& other) const{
     return fracture(num * other.del + other.num * del, del * other.del);
 }
+
 fracture fracture::operator - (const fracture& other) const{
     return fracture(num * other.del - other.num * del, del * other.del);
 }
+
 fracture fracture::operator * (const fracture& other) const{
     return fracture(num * other.num, del * other.del);
 }
+
 fracture fracture::operator / (const fracture& other) const{
     if(other.num == 0){
-        throw std::runtime_error("Del = 0");
+        throw std::invalid_argument("Division by zero");
     }
     return fracture(num * other.del, del * other.num);
 }
+
 fracture& fracture::operator +=(const fracture& other){
     *this = *this + other;
     return *this;
 }
+
 fracture& fracture::operator -=(const fracture& other){
     *this = *this - other;
     return *this;
 }
+
 fracture& fracture::operator *=(const fracture& other){
     *this = *this * other;
     return *this;
 }
+
 fracture& fracture::operator /=(const fracture& other){
     *this = *this / other;
     return *this;
 }
+
 std::ostream& operator << (std::ostream& os, const fracture& fr){
-    /*if(fr.del == 1){
-        os << fr.num; //целые числа при del = 1;
+    if(fr.del == 1){
+        os << fr.num;
     }else{
         os << fr.num << "/" << fr.del;
-    }*/
-    os << fr.num << "/" << fr.del;
+    }
     return os;
 }
