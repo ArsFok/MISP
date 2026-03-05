@@ -12,3 +12,9 @@ cp ./путь до файла ./куда (Копирование файла)
 clear (очистить терминал)
 mkdir "Название" (создать папку)
 touch "Название" (создать файл)
+
+Компиляция:
+если main.cpp и name.h
+g++ main.cpp -o program
+если main.cpp name.h name.cpp
+g++ main.cpp name.cpp -o program
